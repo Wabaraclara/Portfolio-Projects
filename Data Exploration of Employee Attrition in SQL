@@ -1,0 +1,73 @@
+Data Exploration of Employee Attrition in SQL
+
+select * from employee_attrition_test;
+
+-- Employees under attrition having 5+ years of experience between the age group of 27-35
+
+select * from employee_attrition_test
+where age between 27 and 35
+and TotalWorkingYears >= 5;
+
+select count(*) from employee_attrition_test
+where age between 27 and 35
+and TotalWorkingYears >= 5;
+
+-- Employees having maximum and minimum salary working in different departments who received less than 13% salary hike
+
+select * from employee_attrition_test
+where PercentSalaryHike < 13;
+
+select department, PercentSalaryHike, max(monthlyincome), min(monthlyincome)
+from employee_attrition_test
+group by Department
+having PercentSalaryHike < 13;
+
+-- Average monthly income of all employees who worked more than 3 years whose education background is medical
+
+select avg(monthlyincome)
+from employee_attrition_test
+where YearsAtCompany > 3
+and EducationField = 'Medical';
+
+ -- Identifying the total no of male and female employees under attrition whose marital status is married and haven't received promotion in the last 2 years
+ 
+ select gender, count(employeenumber)
+ from employee_attrition_test
+ where MaritalStatus= 'Married'
+ and YearsSinceLastPromotion = 2
+ group by gender;
+ 
+ -- Employees with max performanance rating but no promotion for 4 years and above
+ 
+ select * from employee_attrition_test
+ where PerformanceRating = (select max(PerformanceRating) from employee_attrition_test)
+ and YearsSinceLastPromotion >=4;
+ 
+-- who has max and min percentage salary hike
+
+select yearsatcompany, performancerating, yearssincelastpromotion,
+		max(percentsalaryhike),
+        min(percentsalaryhike)
+from employee_attrition_test
+group by yearsatcompany, performancerating, yearssincelastpromotion
+order by max(percentsalaryhike) desc, min(percentsalaryhike) asc;
+
+-- Employees working overtime but given min salary hike and are more than 5years with the company
+
+select * from employee_attrition_test
+where overtime= 'yes'
+and PercentSalaryHike= (select min(PercentSalaryHike) from employee_attrition_test)
+and YearsAtCompany >= 5;
+
+-- employees not working overtime given max salary hike and are less than 5years with the company
+
+select * from employee_attrition_test
+where overtime= 'no'
+and PercentSalaryHike= (select max(PercentSalaryHike) from employee_attrition_test)
+and YearsAtCompany < 5;
+
+-- Max relationship satisfaction 
+
+select maritalstatus, max(relationshipsatisfaction), min(relationshipsatisfaction)
+from employee_attrition_test
+group by MaritalStatus;
